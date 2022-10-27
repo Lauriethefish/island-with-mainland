@@ -1,6 +1,9 @@
 
 require("perlin")
 
+-- THIS IS FOR THE DEPRECATED, OLD GENERATOR THAT DOES NOT WORK ON MAP VIEW
+-- THIS IS NO LONGER USED EXCEPT ON OLD MAPS THAT USE THE OLD GENERATOR
+
 local enable_generator = settings.global["enable-island-with-mainland"].value;
 local generalScale = 0.005 -- Scale of the lowest frequency noise, for overall island shape
 local generalAmp = 5 -- Amplitude of the lowest frequency noise
@@ -16,6 +19,11 @@ local revertDistance = settings.global["island-water-gap"].value -- The distance
 if enable_generator then
     script.on_event(defines.events.on_chunk_generated,
         function(event)
+            -- SKIP FOR MAPS USING THE NEWER "ISLAND WITH MAINLAND" ELEVATION
+            if event.surface.map_gen_settings.property_expression_names.elevation == "island-with-mainland" then
+                return
+            end
+
             local seed = event.surface.map_gen_settings.seed
             local area = event.area
             local tiles = {} -- Tiles that we will replace with water tiles
